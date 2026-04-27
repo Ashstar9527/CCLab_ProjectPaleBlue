@@ -4,6 +4,7 @@ This is the formal version of Project B. Overheating ISSUE
 
 let systems = []; // hold solar systems
 let ashes = [];
+
 // Sound effects
 let bgSound; // Add space exploration bgm.
 let soundStarted = false;
@@ -86,13 +87,23 @@ let scanX = 0;
 let scanY = 0;
 
 function drawScan() {
-  let breath = sin(frameCount / 40) * 4;
+  let breath;
   scanX = lerp(scanX, mouseX, 0.2);
   scanY = lerp(scanY, mouseY, 0.2);
   colorMode(RGB, 255);
   noFill();
-  let sz = 40 + breath;
   let c = systems[current].theme.c4;
+  let d = dist(mouseX, mouseY, width/2, height/2);
+
+  if (d < 100) {
+    c = color(255, 60, 60);
+    breath = sin(frameCount / 10) * 4;
+  } else {
+    c = systems[current].theme.c4;
+    breath = sin(frameCount / 40) * 2;
+  }
+  let sz = 40 + breath;
+
 
   stroke(c);
   if (mouseIsPressed) {
@@ -493,12 +504,11 @@ function mousePressed() {
   scannerSound[0].play();
   // Play sun piece with clicking.
   let d = dist(mouseX, mouseY, width/2, height/2);
-  if (d < 50) {
+  if (d < 100) {
     if (playingSunPiece) {
       fadingOut(sunPieces[current]);
       playingSunPiece = false;
     } else {
-      sunPieces[current].setVolume(1, 1);
       sunPieces[current].loop();
       playingSunPiece = true;
     } 
@@ -525,6 +535,7 @@ function fadingOut(piece) {
   piece.setVolume(0, 1);
   setTimeout(() => {
     piece.stop();
+    piece.setVolume(1);
   }, 1000);
 }
 
