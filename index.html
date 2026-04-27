@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
+
+  </head>
+  <body>
+    <main>
+      <div id="crt"></div>
+
+      <div id="hud">
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <div class="hud-tl">
+      METIS Co.<br>
+      PILOT #101010<br>
+      <span class = "blink">● LIVE</span>
+    </div>
+    <div class="hud-tr">
+      FREQ: <span class="accent" id="hfreq">---</span> Hz<br>
+      MATCH: <span class="accent" id="hmatch">0.0</span>%<br>
+      RESONATOR MK-VII
+    </div>
+    <div class="hud-bc">
+      <div id="sysname">[---]</div>
+      <div id="sysdata">&nbsp;</div>
+    </div>
+    <div class="hint">SPACE — jump<br>CLICK SUN — chord<br>CLICK PLANET — tone</div>
+  </div>
+
+    </main>
+    <script src="sketch.js"></script>
+  </body>
+</html>
