@@ -81,6 +81,8 @@ function draw() {
   pop();
 
   drawScan();
+
+  console.log(systems.length + " " + ashes.length);
 }
 
 let scanX = 0;

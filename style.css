@@ -21,14 +21,14 @@ canvas {
   inset: 0;
   pointer-events: none;
   font-family: "Courier New", monospace;
-  color: #1dada4;
+  color: #aaf8f2;
   font-size: 11px;
 }
 .corner {
   position: absolute;
   width: 56px;
   height: 56px;
-  border-color: #1dada4;
+  border-color: #a2f6ee;
   border-style: solid;
   opacity: 0.55;
 }
