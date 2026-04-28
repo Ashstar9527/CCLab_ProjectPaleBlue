@@ -57,6 +57,7 @@ function setup() {
   }
   bgSound.setVolume(0.5);
   jumpSound.setVolume(0.6);
+  starSound.setVolume(1.2);
 }
 
 function windowResized() {
@@ -79,10 +80,7 @@ function draw() {
     a.display();
   }
   pop();
-
   drawScan();
-
-  console.log(systems.length + " " + ashes.length);
 }
 
 let scanX = 0;
@@ -98,14 +96,16 @@ function drawScan() {
   let d = dist(mouseX, mouseY, width/2, height/2);
 
   if (d < 100) {
-    c = color(255, 60, 60);
+    c = "#f14242";
     breath = sin(frameCount / 10) * 4;
+  } else if (d > height * 0.45) {
+    c = "#66fff5";
+    breath = sin(frameCount / 30) * 2;
   } else {
     c = systems[current].theme.c4;
     breath = sin(frameCount / 40) * 2;
   }
   let sz = 40 + breath;
-
 
   stroke(c);
   if (mouseIsPressed) {
