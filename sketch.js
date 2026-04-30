@@ -13,16 +13,12 @@ let imgVinyl;
 
 // Sound effects
 let bgSound; // Add space exploration bgm.
-let soundStarted = false;
 let jumpSound; // Space jump
 let sunPieces = [];
-let playingSunPiece = false;
+let playingSunPiece = false; // Complex, so we use a boolean instead of isPlaying()
 let scannerSound = [];
-let playingScanner = false;
 let starSound;
-let playingStarSound = false;
 let starClick;
-let playingStarClick = false;
 
 // Space jump animation set up
 let jumpPhase = "idle";
@@ -157,7 +153,7 @@ function drawScan() {
   }
 }
 
-let sysScale = 1; // zoom in/out effect
+let sysScale = 1; // zoom in/out preparation
 
 function updateJump() {
   if (jumpPhase == "idle") {
@@ -521,6 +517,8 @@ class SolarSystem {
 function keyPressed() {
   // Switch 'windows'
   if (key == " " && jumpPhase == "idle") {
+    bgSound.setVolume(0.5, 1);
+
     jumpPhase = "wind";
     jumpFrame = 0;
     next = (current + 1) % systems.length;
@@ -529,16 +527,14 @@ function keyPressed() {
       fadingOut(sunPieces[current]);
     }
     playingSunPiece = false;
-    if (playingStarSound) {
+    if (starSound.isPlaying()) {
       fadingOut(starSound);
     }
-    playingStarSound = false;
   }
 
   // Start bgm on first interaction
-  if (!soundStarted) {
+  if (!bgSound.isPlaying()) {
     bgSound.loop();
-    soundStarted = true;
   }
 }
 
@@ -549,19 +545,20 @@ function mousePressed() {
     if (playingSunPiece) {
       fadingOut(sunPieces[current]);
       playingSunPiece = false;
+      bgSound.setVolume(0.5, 1);
     } else {
       sunPieces[current].loop();
       playingSunPiece = true;
+      bgSound.setVolume(0.2, 1);
     } 
   }
   starClick.rate(random(0.5, 2));
   starSound.rate(random(1, 2));
 
   if (d > height * 0.45) {
-    if (!playingStarSound) {
+    if (!starSound.isPlaying()) {
       starSound.setVolume(2);
       starSound.loop();
-      playingStarSound = true;
     } 
 
     if (!starClick.isPlaying()) {
@@ -577,9 +574,8 @@ function mouseReleased() {
   let d = dist(mouseX, mouseY, width/2, height/2);
 
   if (d < height * 0.45) {scannerSound[1].play();}
-  if (playingStarSound) {
+  if (starSound.isPlaying) {
     fadingOut(starSound);
-    playingStarSound = false;
   }
 }
 
