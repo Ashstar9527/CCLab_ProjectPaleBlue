@@ -15,13 +15,15 @@ let scannerSound = [];
 let playingScanner = false;
 let starSound;
 let playingStarSound = false;
+let starClick;
+let playingStarClick = false;
 
 // Space jump animation set up
 let jumpPhase = "idle";
 let jumpFrame = 0;
 let jumpOrder = ["wind", "twist", "unwind", "settle", "idle"];
 let jumpLen = {
-  wind: 30, twist: 24, unwind: 36, settle: 26
+  wind: 30, twist: 26, unwind: 32, settle: 22
 } // dictionary, adjusted for the sound effect
 
 let sp = 1; //multiplier into arc rotation
@@ -44,6 +46,7 @@ function preload() {
     loadSound("assets/scanner2.mp3")
   ]
   starSound = loadSound("assets/stars.mp3");
+  starClick = loadSound("assets/starsClicked.mp3");
 }
 
 function setup() {
@@ -57,7 +60,8 @@ function setup() {
   }
   bgSound.setVolume(0.5);
   jumpSound.setVolume(0.6);
-  starSound.setVolume(1.2);
+  starSound.setVolume(2);
+  starClick.setVolume(2);
 }
 
 function windowResized() {
@@ -503,7 +507,6 @@ function keyPressed() {
 }
 
 function mousePressed() {
-  scannerSound[0].play();
   // Play sun piece with clicking.
   let d = dist(mouseX, mouseY, width/2, height/2);
   if (d < 100) {
@@ -515,17 +518,29 @@ function mousePressed() {
       playingSunPiece = true;
     } 
   }
+  starClick.rate(random(0.5, 2));
+  starSound.rate(random(0.8, 1.2))
 
   if (d > height * 0.45) {
     if (!playingStarSound) {
+      starSound.setVolume(2);
       starSound.loop();
       playingStarSound = true;
     } 
+
+    if (!starClick.isPlaying()) {
+      starClick.play();
+    }
+  } else {
+    scannerSound[0].play();
   }
+  
 }
 
 function mouseReleased() {
-  scannerSound[1].play();
+  let d = dist(mouseX, mouseY, width/2, height/2);
+
+  if (d < height * 0.45) {scannerSound[1].play();}
   if (playingStarSound) {
     fadingOut(starSound);
     playingStarSound = false;
