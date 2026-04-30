@@ -19,6 +19,7 @@ let playingSunPiece = false; // Complex, so we use a boolean instead of isPlayin
 let scannerSound = [];
 let starSound;
 let starClick;
+let callsigns = [];
 
 // Space jump animation set up
 let jumpPhase = "idle";
@@ -43,6 +44,11 @@ function preload() {
     let name = 'assets/sunPieces/sunPiece' + i + '.mp3';
     sunPieces.push(loadSound(name));  
   }
+  for (let i = 1; i <= 5; i++) {
+    let name = 'assets/callsigns/callsign' + i + '.mp3';
+    callsigns.push(loadSound(name));
+  }
+
   scannerSound = [
     loadSound("assets/scanner1.mp3"),
     loadSound("assets/scanner2.mp3")
@@ -522,7 +528,7 @@ function keyPressed() {
     jumpPhase = "wind";
     jumpFrame = 0;
     next = (current + 1) % systems.length;
-    jumpSound.play();
+    jumpSound.play(); 
     if (playingSunPiece) {
       fadingOut(sunPieces[current]);
     }
@@ -530,6 +536,11 @@ function keyPressed() {
     if (starSound.isPlaying()) {
       fadingOut(starSound);
     }
+
+    let cs = random(callsigns);
+    if (!cs.isPlaying()) {
+      cs.play();
+    } 
   }
 
   // Start bgm on first interaction
