@@ -5,6 +5,12 @@ This is the formal version of Project B. Overheating ISSUE
 let systems = []; // hold solar systems
 let ashes = [];
 
+// Mouse image
+let imgPlay;
+let imgStop;
+let imgRipple;
+let imgVinyl;
+
 // Sound effects
 let bgSound; // Add space exploration bgm.
 let soundStarted = false;
@@ -23,7 +29,7 @@ let jumpPhase = "idle";
 let jumpFrame = 0;
 let jumpOrder = ["wind", "twist", "unwind", "settle", "idle"];
 let jumpLen = {
-  wind: 30, twist: 26, unwind: 32, settle: 22
+  wind: 30, twist: 24, unwind: 32, settle: 22
 } // dictionary, adjusted for the sound effect
 
 let sp = 1; //multiplier into arc rotation
@@ -47,6 +53,12 @@ function preload() {
   ]
   starSound = loadSound("assets/stars.mp3");
   starClick = loadSound("assets/starsClicked.mp3");
+
+  // Load images for mouse
+  imgPlay = loadImage("assets/play.png");
+  imgStop = loadImage("assets/stop.png");
+  imgRipple = loadImage("assets/ripple.gif");
+  imgVinyl = loadImage("assets/vinyl.gif");
 }
 
 function setup() {
@@ -96,21 +108,29 @@ function drawScan() {
   scanY = lerp(scanY, mouseY, 0.2);
   colorMode(RGB, 255);
   noFill();
-  let c = systems[current].theme.c4;
+  let c = systems[current].theme.c3;
   let d = dist(mouseX, mouseY, width/2, height/2);
+  let icon;
+ 
+  push();
+  tint(systems[current].theme.c2);
+  if (playingSunPiece) {
+    icon = imgStop;
+  } else {
+    icon = imgPlay;
+  }
+  pop();
 
-  if (d < 100) {
-    c = "#f14242";
+  if (d < height * 0.2) {
     breath = sin(frameCount / 10) * 4;
-  } else if (d > height * 0.45) {
-    c = "#66fff5";
+  } else if (d < height * 0.45) {
+    c = "#b5f9f4";
     breath = sin(frameCount / 30) * 2;
   } else {
     c = systems[current].theme.c4;
     breath = sin(frameCount / 40) * 2;
   }
-  let sz = 40 + breath;
-
+  let sz = 50 + breath;
   stroke(c);
   if (mouseIsPressed) {
     strokeWeight(3 + 3 * twist);
@@ -118,7 +138,23 @@ function drawScan() {
   } else {
     strokeWeight(2 + 3 * twist);
   }
-  rect(scanX - sz/2, scanY - sz/2, sz, sz);
+
+  icon.resize(40, 40);
+  imgRipple.resize(80, 80);
+  imgVinyl.resize(90, 90);
+  imageMode(CENTER);
+
+  if (d < height * 0.45) {
+    if (d < height * 0.2) {
+      rect(scanX - sz/2, scanY - sz/2, sz, sz);
+      image(icon, scanX, scanY);
+    } else {
+      circle(scanX, scanY, sz/3)
+      image(imgVinyl, scanX, scanY);
+    }
+  } else {
+    image(imgRipple, scanX, scanY);
+  }
 }
 
 let sysScale = 1; // zoom in/out effect
@@ -509,7 +545,7 @@ function keyPressed() {
 function mousePressed() {
   // Play sun piece with clicking.
   let d = dist(mouseX, mouseY, width/2, height/2);
-  if (d < 100) {
+  if (d < height * 0.2) {
     if (playingSunPiece) {
       fadingOut(sunPieces[current]);
       playingSunPiece = false;
@@ -519,7 +555,7 @@ function mousePressed() {
     } 
   }
   starClick.rate(random(0.5, 2));
-  starSound.rate(random(0.8, 1.2))
+  starSound.rate(random(1, 2));
 
   if (d > height * 0.45) {
     if (!playingStarSound) {
