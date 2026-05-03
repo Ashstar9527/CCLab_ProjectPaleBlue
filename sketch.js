@@ -27,15 +27,18 @@ let jumpFrame = 0;
 let jumpOrder = ["wind", "twist", "unwind", "settle", "idle"];
 let jumpLen = {
   wind: 30, twist: 24, unwind: 32, settle: 22
-} // dictionary, adjusted for the sound effect
+} // "dictionary"
 
-let sp = 1; //multiplier into arc rotation
-let twist = 0; //0 - no warp, 1 - full
+// Three parameters to scale the space jump animation.
+let sysScale = 1; // zoom in/out preparation
+let sp = 1; //angle velocity
 let fade = 0; //transition btw two systems
+
+// Which system is displayed and what come next
 let next = 0; // the next to play
 let current = 0; // the current displayed system
 
-let spinAcc = 0; //replace frameCount as acceleration
+let spinAcc = 0; // Angle spinned so far.
 
 function preload() {
   bgSound = loadSound("assets/bgSound.mp3");
@@ -84,7 +87,7 @@ function windowResized() {
 
 function draw() {
   updateJump();
-  spinAcc += sp;
+  spinAcc += sp; 
   background(systems[current].theme.bg);
 
   if (fade < 0.999) systems[current].update(1-fade);
@@ -135,10 +138,9 @@ function drawScan() {
   let sz = 50 + breath;
   stroke(c);
   if (mouseIsPressed) {
-    strokeWeight(3 + 3 * twist);
-    sz = 50 + breath;
+    strokeWeight(lerp(2, 4, 0.2));
   } else {
-    strokeWeight(2 + 3 * twist);
+    strokeWeight(2);
   }
 
   icon.resize(40, 40);
@@ -159,14 +161,11 @@ function drawScan() {
   }
 }
 
-let sysScale = 1; // zoom in/out preparation
-
 function updateJump() {
   if (jumpPhase == "idle") {
     sysScale = lerp(sysScale, 1, 0.2);
     sp = lerp(sp, 1, 0.15);
     fade = 0;
-    twist = 0;
     if (current != next) {current = next};
     return;
   }
@@ -175,36 +174,29 @@ function updateJump() {
   let t = constrain(jumpFrame / d, 0, 1); //progress parameter, from drawBlink();
 
   if (jumpPhase == "wind") {
-    let e = t * t * t;
+    let e = t * t * t; // easing in animation
     sysScale = 1 + 0.08 * e;
     sp = lerp(1, 9, e);
     fade = 0;
-    twist = 0;
-
   } else if (jumpPhase == "twist") {
-    let e; // a function a++ till middle and a-- later
+    let e; // easing function a++ till middle and a-- later
     if (t < 0.5) {
-      e = 4 * t * t * t;
+      e = 4 * t * t * t; //ease-in: accelerate sharply, more than phase 1.
     } else {
-      e = 1 - pow(-2*t+2, 3) / 2;
+      e = 1 - pow(-2*t+2, 3) / 2; // ease-out: decelerate, but more linear.
     }
-    sysScale = lerp(1.12 , 0.78, e);
-    sp = lerp(9, 14, e);
-    fade = e * e;
-    twist = sin(PI * t);
-
+    sysScale = lerp(1.12 , 0.78, e); // system expands and squish
+    sp = lerp(9, 14, e); // Speed up sharply and slow down a bit
+    fade = e * e; // Fade in the new system, start slow.
   } else if (jumpPhase == "unwind") {
     let e = 1 - pow(1-t, 3);
     sysScale = lerp(0.78, 1.06, e);
     sp = lerp(14, 3, e);
     fade = 1;
-    twist = lerp(1, 0, e);
-
   } else if (jumpPhase == "settle") {
     let e = 1 - pow(1-t, 3);
     sysScale = lerp(1.06, 1, e);
     sp = lerp(3, 1, e);
-    twist = 0;
     fade = 1;
   }
 
