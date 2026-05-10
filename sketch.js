@@ -500,7 +500,7 @@ class SolarSystem {
     let R = height * 0.45;
     push();
     translate(width / 2, height / 2);
-    scale(sysScale, -sysScale); //Zooms during jump
+    scale(sysScale); //Zooms during jump
 
     this.drawArcs(R, al);
 
@@ -570,7 +570,6 @@ function mousePressed() {
   } else {
     scannerSound[0].play();
   }
-  
 }
 
 function mouseReleased() {
